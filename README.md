@@ -1,6 +1,6 @@
-# chatappdemo
+# Chat App Project
 
-A new Flutter project.
+Junior Mobile Project
 
 ## Getting Started
 

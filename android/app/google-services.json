@@ -1,20 +1,20 @@
 {
   "project_info": {
-    "project_number": "862381171830",
-    "project_id": "filebase-eb521",
-    "storage_bucket": "filebase-eb521.appspot.com"
+    "project_number": "1064502753004",
+    "project_id": "chat-app2-e7dec",
+    "storage_bucket": "chat-app2-e7dec.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:862381171830:android:6e359ffd333f5eff02eb57",
+        "mobilesdk_app_id": "1:1064502753004:android:735e8e5f4eb62368db57c9",
         "android_client_info": {
           "package_name": "com.example.chatappdemo"
         }
       },
       "oauth_client": [
         {
-          "client_id": "862381171830-7fs2lpc99s7sv3eliqakbsfk0i59g7ug.apps.googleusercontent.com",
+          "client_id": "1064502753004-lp48bcfmpjfrd7pvg599ocbf0793opij.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.chatappdemo",
@@ -22,21 +22,28 @@
           }
         },
         {
-          "client_id": "862381171830-3h74grrosro81nq1rho5ihhuq67galnj.apps.googleusercontent.com",
+          "client_id": "1064502753004-2oeujuvc30iddh2b274d9k47dvosi9kg.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD7AZEPa16UHcX_6H8-l5yaxEx384DPxnk"
+          "current_key": "AIzaSyCnjIDIpu7-mcn-3lbcgI0MYA6ijG7rA9s"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "862381171830-3h74grrosro81nq1rho5ihhuq67galnj.apps.googleusercontent.com",
+              "client_id": "1064502753004-2oeujuvc30iddh2b274d9k47dvosi9kg.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1064502753004-tqbu4imp22nhhf8b8v753chkrak10svn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.chatappdemo"
+              }
             }
           ]
         }

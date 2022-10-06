@@ -31,7 +31,7 @@ class _ContactsState extends State<Contacts> {
             ],
           )
         ],
-        title: CustomText(
+        title: const CustomText(
           text: 'Contacts',
           textColor: AppColor.white,
           textSize: 25,

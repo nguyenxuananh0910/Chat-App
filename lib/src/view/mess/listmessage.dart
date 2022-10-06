@@ -43,12 +43,16 @@ class _MessState extends State<Mess> {
         ],
       ),
       body: getBody(),
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: const Color(0xff734DDE),
+          child: const Icon(Icons.add_comment),
+          onPressed: () {}),
     );
   }
 
   Widget getBody() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(vertical: 0),
       child: SingleChildScrollView(
         child: Column(
           children: [GroupChat()],
@@ -67,32 +71,11 @@ class _MessState extends State<Mess> {
           return ListView.builder(
             itemBuilder: (context, index) {
               final groupchat = snapshot.data!.docs[index];
-              return ListTile(
-                leading: CircleAvatar(
-                  radius: 35,
-                  backgroundImage: NetworkImage(groupchat["avataUrl"]),
-                ),
-                title: CustomText(
-                  text: (groupchat["groupName"]),
-                  textColor: AppColor.black,
-                  textSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-                subtitle: const CustomText(
-                  text: 'hello',
-                  textColor: AppColor.black,
-                  textSize: 18,
-                ),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ChatApp(
-                                groupchatId: snapshot.data!.docs[index].id,
-                                listMenber: snapshot.data!.docs[index]['menber']
-                                    .toList(),
-                              )));
-                },
+              return Column(
+                children: [
+                  listChat(groupchat, context, snapshot, index),
+                  listChat(groupchat, context, snapshot, index),
+                ],
               );
             },
             itemCount: snapshot.data!.docs.length,
@@ -102,4 +85,34 @@ class _MessState extends State<Mess> {
       ),
     );
   }
+}
+
+Widget listChat(groupchat, context, snapshot, index) {
+  return ListTile(
+    leading: CircleAvatar(
+      radius: 35,
+      backgroundImage: NetworkImage(groupchat["avataUrl"]),
+    ),
+    title: CustomText(
+      text: (groupchat["groupName"]),
+      textColor: AppColor.black,
+      textSize: 20,
+      fontWeight: FontWeight.bold,
+    ),
+    subtitle: const CustomText(
+      text: 'hello',
+      textColor: Color(0xff999CA0),
+      textSize: 18,
+    ),
+    onTap: () {
+      Navigator.push(context,
+          MaterialPageRoute(
+            builder: (context) => ChatApp(
+              groupchatId: snapshot.data!.docs[index].id,
+              listMenber: snapshot.data!.docs[index]['menber'].toList(),
+          )
+        )
+      );
+    },
+  );
 }
