@@ -20,24 +20,34 @@ class VideoBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: isMe ? 50 : 0),
-      child: Column(
-        children: [
-          VideoPlayer(videoUrl: message.message),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              CustomText(
-                text: dayFormat(message.time),
-                textSize: 10,
-                fontWeight: FontWeight.w200,
-                textColor: getSuitableColor(AppColor.black, AppColor.white),
-              )
-            ],
-          )
-        ],
-      ),
+    return Column(
+      mainAxisAlignment:
+          (isMe ? MainAxisAlignment.end : MainAxisAlignment.start),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 350,
+          child: VideoPlayer(videoUrl: message.message),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Row(
+          mainAxisAlignment:
+              (isMe ? MainAxisAlignment.end : MainAxisAlignment.start),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomText(
+              text: dayFormat(message.time),
+              textSize: 15,
+              fontWeight: FontWeight.w300,
+              textColor: isMe
+                  ? AppColor.black
+                  : getSuitableColor(AppColor.black, AppColor.white),
+            )
+          ],
+        )
+      ],
     );
   }
 }

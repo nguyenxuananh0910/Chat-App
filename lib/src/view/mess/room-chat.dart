@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'dart:io';
+
+import 'package:chatappdemo/src/view/mess/uploadfile.dart';
 import 'package:chatappdemo/theme/colors.dart';
 
 import 'package:flutter/material.dart';
@@ -9,9 +12,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/components/custom_text.dart';
 import '../../../services/auth.dart';
-
+import 'package:file_picker/file_picker.dart';
+import '../../../utils/kind_of_file.dart';
 import '../../domain/message.dart';
 import 'customchat/chat_case.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ChatApp extends StatefulWidget {
   final String groupchatId;
@@ -27,13 +32,12 @@ class ChatApp extends StatefulWidget {
 }
 
 class _ChatAppState extends State<ChatApp> {
-  final StreamController<DocumentSnapshot> _showinfo =
-      StreamController<DocumentSnapshot>();
   bool isloading = false;
   final TextEditingController _message = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final currentUser = Auth().currentUser;
+
   // final user = FirebaseAuth.instance.currentUser;
   @override
   void initState() {
@@ -48,18 +52,50 @@ class _ChatAppState extends State<ChatApp> {
     super.dispose();
   }
 
-  void onSendMessage() async {
-    if (_message.text.isNotEmpty) {
+  Future selectFile() async {
+    final result = await FilePicker.platform.pickFiles(
+        // type: FileType.custom,
+        // allowedExtensions: ['jpg', 'mp4', 'doc'],
+        );
+    if (result != null) {
+      pickfile = result.files.first;
+      uploadImage();
+    }
+  }
+
+  Future uploadImage() async {
+    final path = 'file/${pickfile!.name}';
+    final file = File(pickfile!.path!);
+    int type = checkTypeOfFile(path);
+    final ref = FirebaseStorage.instance.ref().child(path);
+    uploadTask = ref.putFile(file);
+
+    final snapshot = await uploadTask!.whenComplete(() {});
+
+    final urlDownload = await snapshot.ref.getDownloadURL();
+    print('Dowlink: $urlDownload');
+
+    onSendMessage(type: type, fileName: urlDownload);
+  }
+
+  void onSendMessage({required int type, String? fileName, String? url}) {
+    String content = '';
+    if (type == messageType) {
+      content = _message.text.trim();
+    } else {
+      content = fileName!;
+    }
+    if (content.isNotEmpty) {
       Map<String, dynamic> messages = {
         "chatId": widget.groupchatId,
         "sendby": _auth.currentUser!.uid,
-        "message": _message.text,
-        "type": int.parse('1'),
+        "message": content,
+        "type": type,
         "time": DateTime.now().millisecondsSinceEpoch.toString(),
       };
 
       _message.clear();
-      await _firestore.collection('messages').add(messages);
+      _firestore.collection('messages').add(messages);
     } else {
       print("Enter Some Text");
     }
@@ -187,20 +223,21 @@ class _ChatAppState extends State<ChatApp> {
         color: Colors.grey[200]!,
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 1),
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(
-              Icons.attach_file_sharp,
-              color: AppColor.primary,
-              size: 25,
-            ),
-            const Icon(
-              FontAwesomeIcons.image,
-              color: AppColor.primary,
-              size: 25,
+            GestureDetector(
+              onTap: () {
+                showModalBottomSheet(
+                    context: context, builder: ((builder) => showFile()));
+              },
+              child: const Icon(
+                FontAwesomeIcons.image,
+                color: AppColor.primary,
+                size: 25,
+              ),
             ),
             Container(
               width: size.width * 0.69,
@@ -212,7 +249,7 @@ class _ChatAppState extends State<ChatApp> {
                 child: TextField(
                   maxLines: 1,
                   controller: _message,
-                  onSubmitted: (value) => onSendMessage(),
+                  onSubmitted: (value) => onSendMessage(type: 1),
                   textInputAction: TextInputAction.done,
                   style: const TextStyle(
                     color: AppColor.black,
@@ -225,12 +262,81 @@ class _ChatAppState extends State<ChatApp> {
               ),
             ),
             GestureDetector(
-                onTap: onSendMessage,
+                onTap: () => onSendMessage(type: 1),
                 child: const Icon(
                   Icons.send,
                   color: AppColor.primary,
                   size: 28,
                 )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget showFile() {
+    return SizedBox(
+      height: 60,
+      width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 15,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                IconButton(
+                    onPressed: () {
+                      selectFile();
+                    },
+                    icon: const Icon(
+                      Icons.photo_library,
+                      size: 30,
+                    )),
+                const CustomText(
+                  text: 'gallery',
+                  textSize: 18,
+                  textColor: AppColor.black,
+                  fontWeight: FontWeight.w400,
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                IconButton(
+                    onPressed: () {
+                      getCameraImages();
+                    },
+                    icon: const Icon(
+                      Icons.camera_alt_outlined,
+                      size: 30,
+                    )),
+                const CustomText(
+                  text: 'camera',
+                  textSize: 18,
+                  textColor: AppColor.black,
+                  fontWeight: FontWeight.w400,
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.attach_file_sharp,
+                      size: 30,
+                    )),
+                const CustomText(
+                  text: 'file',
+                  textSize: 18,
+                  textColor: AppColor.black,
+                  fontWeight: FontWeight.w400,
+                ),
+              ],
+            ),
           ],
         ),
       ),
