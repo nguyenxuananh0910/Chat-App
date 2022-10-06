@@ -1,12 +1,14 @@
-import 'package:chatappdemo/src/view/login/login_ui.dart';
-import 'package:chatappdemo/src/view/groupchat/group_ui.dart';
-import 'package:chatappdemo/src/view/pages/root_app.dart';
+// Library
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+//Import File
+import '../src/view/login/login_ui.dart';
+import '../src/view/groupchat/group_ui.dart';
+import '../src/view/pages/root_app.dart';
 import '../services/auth.dart';
 import '../services/database.dart';
 

@@ -1,17 +1,18 @@
+//Libary
 import 'dart:async';
-
-import 'package:chatappdemo/services/auth.dart';
-
-import 'package:chatappdemo/src/landing_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'theme/app_theme.dart';
-import 'theme/strings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+// Import Files
+import '../services/auth.dart';
+import '../src/landing_page.dart';
+import '../theme/app_theme.dart';
+import '../theme/strings.dart';
 
 RemoteMessage? initMsg;
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -57,9 +58,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   void setStatus(String status) async {
-    await _firestore.collection("users").doc(_auth.currentUser?.uid).update({
-      "status": status,
-    });
+    await _firestore
+        .collection("users")
+        .doc(_auth.currentUser?.uid)
+        .update({
+          "status": status
+        });
+
+    // Check User có trong máy ko
+    // var a = await _firestore.collection("users").get();
+    // print("${a.docs.map((doc) => doc.data())} - ${_auth.currentUser?.uid}");
   }
 
   @override
