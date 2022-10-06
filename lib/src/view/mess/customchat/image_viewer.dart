@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ImageViewer extends StatelessWidget {
   const ImageViewer({Key? key, required this.url}) : super(key: key);
@@ -8,17 +7,18 @@ class ImageViewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.black,
       ),
       body: InteractiveViewer(
         clipBehavior: Clip.none,
         maxScale: 4,
         child: SizedBox(
-          width: 100,
-          height: 100,
+          width: double.infinity,
+          height: double.infinity,
           child: Hero(
             tag: url,
             child: Image.network(
