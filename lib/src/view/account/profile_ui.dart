@@ -64,8 +64,10 @@ Widget getBody(BuildContext context) {
                       CircleAvatar(
                         radius: 40,
                         backgroundImage: NetworkImage(snapshot
-                                .data?['photoURL'] ??
-                            "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2019/6/10/738354/595097.jpg"),
+                                    .data?['photoURL'] ==
+                                ""
+                            ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLhlPE0gXGOoAq3qU3GHKSS2Ih3VQDLzZ6GQ&usqp=CAU"
+                            : snapshot.data?['photoURL']),
                       ),
                       const SizedBox(
                         width: 20,

@@ -51,7 +51,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
         child: _chewieController != null &&
                 _chewieController!.videoPlayerController.value.isInitialized
             ? Chewie(controller: _chewieController!)
-            : const Center(child: CircularProgressIndicator(strokeWidth: 1)),
+            : const Center(child: CircularProgressIndicator(strokeWidth: 0.5)),
       ),
     );
   }
