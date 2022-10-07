@@ -27,7 +27,7 @@ class FileBubble extends StatelessWidget {
         margin: EdgeInsets.only(
           left: isMe ? 50 : 0,
         ),
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: 15,
           vertical: 10,
         ),

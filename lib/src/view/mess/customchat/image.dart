@@ -18,56 +18,59 @@ class ImageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment:
-          (isMe ? MainAxisAlignment.end : MainAxisAlignment.start),
-      crossAxisAlignment:
-          (isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start),
-      children: [
-        GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => ImageViewer(url: message.message)));
-          },
-          child: Hero(
-            tag: message.message,
-            child: Image.network(
-              message.message,
-              width: 300,
-              height: 400,
-              loadingBuilder: (BuildContext context, Widget child,
-                  ImageChunkEvent? loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                        : null,
-                  ),
-                );
-              },
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        mainAxisAlignment:
+            (isMe ? MainAxisAlignment.end : MainAxisAlignment.start),
+        crossAxisAlignment:
+            (isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start),
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => ImageViewer(url: message.message)));
+            },
+            child: Hero(
+              tag: message.message,
+              child: Image.network(
+                message.message,
+                width: 300,
+                height: 400,
+                loadingBuilder: (BuildContext context, Widget child,
+                    ImageChunkEvent? loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                          : null,
+                    ),
+                  );
+                },
+              ),
             ),
           ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment:
-              (isMe ? MainAxisAlignment.end : MainAxisAlignment.start),
-          children: [
-            CustomText(
-              text: dayFormat(message.time),
-              textSize: 15,
-              fontWeight: FontWeight.w300,
-              textColor: isMe
-                  ? AppColor.black
-                  : getSuitableColor(AppColor.black, AppColor.white),
-            )
-          ],
-        )
-      ],
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment:
+                (isMe ? MainAxisAlignment.end : MainAxisAlignment.start),
+            children: [
+              CustomText(
+                text: dayFormat(message.time),
+                textSize: 15,
+                fontWeight: FontWeight.w300,
+                textColor: isMe
+                    ? AppColor.black
+                    : getSuitableColor(AppColor.black, AppColor.white),
+              )
+            ],
+          )
+        ],
+      ),
     );
   }
 }

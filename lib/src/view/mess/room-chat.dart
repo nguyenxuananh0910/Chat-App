@@ -19,8 +19,8 @@ import 'customchat/chat_case.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class ChatApp extends StatefulWidget {
-  final String groupchatId;
-  final List listMenber;
+  final String? groupchatId;
+  final List? listMenber;
   const ChatApp({
     Key? key,
     required this.groupchatId,
@@ -37,10 +37,11 @@ class _ChatAppState extends State<ChatApp> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final currentUser = Auth().currentUser;
-
-  // final user = FirebaseAuth.instance.currentUser;
+  String? idGroupChat;
+  DocumentSnapshot? userTemple;
   @override
   void initState() {
+    idGroupChat = widget.groupchatId;
     showInfoRecevier();
     // TODO: implement initState
     super.initState();
@@ -78,7 +79,21 @@ class _ChatAppState extends State<ChatApp> {
     onSendMessage(type: type, fileName: urlDownload);
   }
 
-  void onSendMessage({required int type, String? fileName, String? url}) {
+  void onSendMessage({required int type, String? fileName, String? url}) async {
+    // tao groupid moi
+    if (idGroupChat == null) {
+      Map<String, dynamic> group = {
+        "avataUrl": userTemple?['photoURL'],
+        "groupName": userTemple!['name'],
+        "menber": [
+          _auth.currentUser!.uid.toString(),
+          userTemple!.id.toString()
+        ],
+      };
+      idGroupChat = (await _firestore.collection('group').add(group)).id;
+      setState(() {});
+    }
+    // gui mess
     String content = '';
     if (type == messageType) {
       content = _message.text.trim();
@@ -87,7 +102,7 @@ class _ChatAppState extends State<ChatApp> {
     }
     if (content.isNotEmpty) {
       Map<String, dynamic> messages = {
-        "chatId": widget.groupchatId,
+        "chatId": idGroupChat,
         "sendby": _auth.currentUser!.uid,
         "message": content,
         "type": type,
@@ -101,15 +116,15 @@ class _ChatAppState extends State<ChatApp> {
     }
   }
 
+  // show info
   Stream<DocumentSnapshot> showInfoRecevier() {
     String a = '';
-    for (var item in widget.listMenber) {
+    for (var item in widget.listMenber ?? []) {
       if (item.toString() != currentUser!.uid) {
         a = item.toString().trim();
       }
     }
-    // var rs = await FirebaseFirestore.instance.collection('users').doc(a).get();
-    // _showinfo.sink.add(rs);
+
     return FirebaseFirestore.instance.collection('users').doc(a).snapshots();
   }
 
@@ -123,6 +138,7 @@ class _ChatAppState extends State<ChatApp> {
                 stream: showInfoRecevier(),
                 builder: (context, snapshot) {
                   if (snapshot.data != null) {
+                    userTemple = snapshot.data!; // lay thong tin user
                     return Column(
                       children: [
                         CustomText(
@@ -182,29 +198,34 @@ class _ChatAppState extends State<ChatApp> {
         Column(
           children: [
             Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-              stream: _firestore
-                  .collection('messages')
-                  .where('chatId', isEqualTo: widget.groupchatId)
-                  .orderBy('time', descending: true)
-                  .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.data != null) {
-                  return ListView.builder(
-                      reverse: true, //dao chieu list
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        var a = snapshot.data!.docs[index];
-                        final Message message = Message.fromDocument(a);
-                        bool isMe = message.sendby == currentUser!.uid;
-                        return ChatBubble(message: message, isMe: isMe);
-                      });
-                } else {
-                  return Container();
-                }
-              },
-            )),
+                child: idGroupChat != null // check group
+                    ? StreamBuilder<QuerySnapshot>(
+                        stream: _firestore
+                            .collection('messages')
+                            .where('chatId', isEqualTo: idGroupChat)
+                            .orderBy('time', descending: true)
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.data != null) {
+                            return ListView.builder(
+                                reverse: true, //dao chieu list
+                                itemCount: snapshot.data!.docs.length,
+                                itemBuilder: (context, index) {
+                                  var chat = snapshot.data!.docs[index];
+                                  final Message message =
+                                      Message.fromDocument(chat);
+                                  bool isMe =
+                                      message.sendby == currentUser!.uid;
+                                  return ChatBubble(
+                                      message: message, isMe: isMe);
+                                });
+                          } else {
+                            return Container();
+                          }
+                        },
+                      )
+                    : Container()),
             const SizedBox(
               height: kBottomNavigationBarHeight + 30,
             ),

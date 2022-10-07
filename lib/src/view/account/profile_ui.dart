@@ -66,7 +66,7 @@ Widget getBody(BuildContext context) {
                         backgroundImage: NetworkImage(snapshot
                                     .data?['photoURL'] ==
                                 ""
-                            ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLhlPE0gXGOoAq3qU3GHKSS2Ih3VQDLzZ6GQ&usqp=CAU"
+                            ? "https://png.pngtree.com/png-vector/20190805/ourlarge/pngtree-account-avatar-user-abstract-circle-background-flat-color-icon-png-image_1650938.jpg"
                             : snapshot.data?['photoURL']),
                       ),
                       const SizedBox(
