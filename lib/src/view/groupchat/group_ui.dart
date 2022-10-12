@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/components/custom_text.dart';
 import '../../../core/components/customappbar.dart';
 import '../../../theme/colors.dart';
+import '../mess/search.dart';
 
 class Groupchat extends StatefulWidget {
   const Groupchat({Key? key}) : super(key: key);
@@ -21,8 +22,10 @@ class _GroupchatState extends State<Groupchat> {
           Row(
             children: [
               IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.qr_code),
+                onPressed: () {
+                  showSearch(context: context, delegate: SearchUser());
+                },
+                icon: const Icon(Icons.search),
               ),
               IconButton(
                 onPressed: () {},

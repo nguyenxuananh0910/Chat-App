@@ -79,13 +79,13 @@ Widget getBody(BuildContext context) {
                             text: snapshot.data?['name'],
                             textSize: 25,
                             textColor: AppColor.black,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w700,
                           ),
                           CustomText(
                             text: user.email!,
-                            textSize: 25,
+                            textSize: 20,
                             textColor: AppColor.black,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w400,
                           ),
                         ],
                       )
@@ -113,7 +113,7 @@ Widget getBody(BuildContext context) {
                     width: 400,
                     height: 50,
                     child: CustomButton(
-                      color: Colors.grey[100]!,
+                      color: Colors.grey[200]!,
                       onPressed: () {
                         Navigator.push(
                             context,
@@ -128,19 +128,174 @@ Widget getBody(BuildContext context) {
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          CustomText(
-                            text: 'account',
-                            textSize: 15,
-                            textColor: AppColor.black,
-                            fontWeight: FontWeight.bold,
+                        children: [
+                          Row(
+                            children: const [
+                              Icon(
+                                Icons.account_circle_outlined,
+                                color: AppColor.loyalBlue,
+                                size: 28,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              CustomText(
+                                text: 'Notifications',
+                                textSize: 18,
+                                textColor: AppColor.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ],
+                          ),
+                          const Icon(Icons.arrow_forward_ios)
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: SizedBox(
+                    width: 400,
+                    height: 50,
+                    child: CustomButton(
+                      color: Colors.grey[200]!,
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: const [
+                              Icon(
+                                Icons.notifications_none,
+                                color: AppColor.loyalBlue,
+                                size: 28,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              CustomText(
+                                text: 'Notifications',
+                                textSize: 18,
+                                textColor: AppColor.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ],
+                          ),
+                          const Icon(Icons.arrow_forward_ios)
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: SizedBox(
+                    width: 400,
+                    height: 50,
+                    child: CustomButton(
+                      color: Colors.grey[200]!,
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: const [
+                              Icon(
+                                Icons.security_outlined,
+                                color: AppColor.loyalBlue,
+                                size: 28,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              CustomText(
+                                text: 'Security',
+                                textSize: 18,
+                                textColor: AppColor.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ],
                           ),
                           Icon(Icons.arrow_forward_ios)
                         ],
                       ),
                     ),
                   ),
-                )
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: SizedBox(
+                    width: 400,
+                    height: 50,
+                    child: CustomButton(
+                      color: Colors.grey[200]!,
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: const [
+                              Icon(
+                                Icons.chat_bubble_outline,
+                                color: AppColor.loyalBlue,
+                                size: 28,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              CustomText(
+                                text: 'Chat',
+                                textSize: 18,
+                                textColor: AppColor.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ],
+                          ),
+                          Icon(Icons.arrow_forward_ios)
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: SizedBox(
+                    width: 400,
+                    height: 50,
+                    child: CustomButton(
+                      color: Colors.grey[200]!,
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: const [
+                              Icon(
+                                Icons.help_center_outlined,
+                                color: AppColor.loyalBlue,
+                                size: 28,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              CustomText(
+                                text: 'Help',
+                                textSize: 18,
+                                textColor: AppColor.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

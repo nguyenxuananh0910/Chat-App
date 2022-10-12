@@ -8,9 +8,13 @@ const List rootAppJson = [
     "text": "Messenger",
     "color": Color(0xff734DDE)
   },
-  {"icon": "assets/icons/users.svg", "text": "Group", "color": Color(0xff734DDE)},
   {
-    "icon": "assets/icons/trash_icon.svg",
+    "icon": "assets/icons/users.svg",
+    "text": "Group",
+    "color": Color(0xff734DDE)
+  },
+  {
+    "icon": "assets/icons/smile.svg",
     "text": "Contacts",
     "color": Color(0xff734DDE)
   },
