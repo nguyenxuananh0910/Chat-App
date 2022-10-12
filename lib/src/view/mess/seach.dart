@@ -6,14 +6,14 @@ import '../../../core/components/custom_text.dart';
 import '../../../theme/colors.dart';
 
 class SearchUser extends SearchDelegate {
-  String groupchatId(String user1, String user2) {
-    if (user1[0].toLowerCase().codeUnits[0] >
-        user2.toLowerCase().codeUnits[0]) {
-      return "$user1$user2";
-    } else {
-      return "$user2$user1";
-    }
-  }
+  // String groupchatId(String user1, String user2) {
+  //   if (user1[0].toLowerCase().codeUnits[0] >
+  //       user2.toLowerCase().codeUnits[0]) {
+  //     return "$user1$user2";
+  //   } else {
+  //     return "$user2$user1";
+  //   }
+  // }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -47,7 +47,7 @@ class SearchUser extends SearchDelegate {
         return ListView.builder(
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
-            final seachuser = snapshot.data!.docs[index];
+            final searchUser = snapshot.data!.docs[index];
             return Padding(
               padding: EdgeInsets.symmetric(vertical: 10),
               child: ListTile(
@@ -55,17 +55,17 @@ class SearchUser extends SearchDelegate {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => ChatApp(
                             groupchatId: null,
-                            listMenber: [seachuser.id],
+                            listMenber: [searchUser.id],
                           )));
                 },
                 leading: CircleAvatar(
                   radius: 40,
-                  backgroundImage: NetworkImage(seachuser['photoURL'] == ""
+                  backgroundImage: NetworkImage(searchUser['photoURL'] == ""
                       ? "https://png.pngtree.com/png-vector/20190805/ourlarge/pngtree-account-avatar-user-abstract-circle-background-flat-color-icon-png-image_1650938.jpg"
-                      : seachuser['photoURL']),
+                      : searchUser['photoURL']),
                 ),
                 title: CustomText(
-                  text: (seachuser["name"]),
+                  text: (searchUser["name"]),
                   textColor: AppColor.black,
                   textSize: 20,
                   fontWeight: FontWeight.w500,
