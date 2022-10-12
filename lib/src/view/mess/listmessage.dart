@@ -6,7 +6,7 @@ import '../../../core/components/custom_text.dart';
 import '../../../core/components/customappbar.dart';
 import '../../../services/auth.dart';
 import 'room-chat.dart';
-import 'seach.dart';
+import 'search.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Mess extends StatefulWidget {

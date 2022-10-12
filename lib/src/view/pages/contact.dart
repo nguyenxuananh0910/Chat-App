@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import '../../../core/components/custom_text.dart';
 import '../../../core/components/customappbar.dart';
 import '../../../theme/colors.dart';
-import '../mess/seach.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../mess/search.dart';
 
 class Contacts extends StatefulWidget {
   const Contacts({Key? key}) : super(key: key);
@@ -13,6 +17,8 @@ class Contacts extends StatefulWidget {
 }
 
 class _ContactsState extends State<Contacts> {
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,12 +27,14 @@ class _ContactsState extends State<Contacts> {
           Row(
             children: [
               IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.qr_code),
+                onPressed: () {
+                  showSearch(context: context, delegate: SearchUser());
+                },
+                icon: const Icon(Icons.search),
               ),
               IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.more_vert),
+                icon: const Icon(Icons.more_vert),
               ),
             ],
           )
@@ -41,15 +49,59 @@ class _ContactsState extends State<Contacts> {
       body: getBody(),
     );
   }
-}
 
-Widget getBody() {
-  return SingleChildScrollView(
-    child: Padding(
-      padding: EdgeInsets.symmetric(vertical: 30),
-      child: Column(
-        children: [],
-      ),
-    ),
-  );
+  Widget getBody() {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore.collection('users').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              final searchuser = snapshot.data!.docs[index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: ListTile(
+                  onTap: () {
+                    // Navigator.of(context).push(MaterialPageRoute(
+                    //     builder: (_) => ChatApp(
+                    //           groupchatId: null,
+                    //           listMenber: [searchuser.id],
+                    //         )));
+                  },
+                  leading: CircleAvatar(
+                    radius: 40,
+                    backgroundImage: NetworkImage(searchuser['photoURL'] == ""
+                        ? "https://png.pngtree.com/png-vector/20190805/ourlarge/pngtree-account-avatar-user-abstract-circle-background-flat-color-icon-png-image_1650938.jpg"
+                        : searchuser['photoURL']),
+                  ),
+                  title: CustomText(
+                    text: (searchuser["name"]),
+                    textColor: AppColor.black,
+                    textSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  subtitle: CustomText(
+                    text: (searchuser["status"]),
+                    textColor: AppColor.black,
+                    textSize: 15,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              );
+            },
+          );
+        } else {
+          return const Center(
+              child: CustomText(
+            text: 'No user',
+            textColor: AppColor.black,
+            textSize: 20,
+            fontWeight: FontWeight.w500,
+          ));
+        }
+      },
+    );
+  }
 }

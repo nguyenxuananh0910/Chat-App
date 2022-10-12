@@ -61,13 +61,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     await _firestore
         .collection("users")
         .doc(_auth.currentUser?.uid)
-        .update({
-          "status": status
-        });
-
-    // Check User có trong máy ko
-    // var a = await _firestore.collection("users").get();
-    // print("${a.docs.map((doc) => doc.data())} - ${_auth.currentUser?.uid}");
+        .update({"status": status});
   }
 
   @override
@@ -95,9 +89,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Provider<Database>(create: (_) => FireStoreDatabase(uid: UserInfo.id)),
         Provider<AuthBase>(create: (_) => Auth()),
-        // Provider<NotificationBase>(create: (_) => notification),
       ],
       child: MaterialApp(
         title: Strings.appName,
