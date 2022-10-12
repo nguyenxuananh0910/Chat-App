@@ -22,7 +22,7 @@ class _MessState extends State<Mess> {
   final currentUser = Auth().currentUser;
   Stream<DocumentSnapshot> showInfoRecevier(List groupchat) {
     String a = '';
-    for (var item in groupchat!) {
+    for (var item in groupchat) {
       if (item.toString() != currentUser!.uid) {
         a = item.toString().trim();
       }
@@ -67,17 +67,18 @@ class _MessState extends State<Mess> {
       padding: const EdgeInsets.symmetric(vertical: 0),
       child: SingleChildScrollView(
         child: Column(
-          children: [GroupChat()],
+          children: [listChat()],
         ),
       ),
     );
   }
 
-  Widget GroupChat() {
+  Widget listChat() {
     return SingleChildScrollView(
       child: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('group')
+            .where('chatType', isEqualTo: "Private")
             .where('menber', arrayContains: _auth.currentUser?.uid)
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -113,6 +114,7 @@ class _MessState extends State<Mess> {
                       textSize: 18,
                     ),
                     onTap: () {
+                      // print("${groupchat['menber']}");
                       Navigator.push(
                           context,
                           MaterialPageRoute(
