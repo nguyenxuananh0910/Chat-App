@@ -1,17 +1,26 @@
 # Chat App Project
 
-Junior Mobile Project
+### Junior Mobile Project
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-"# Chat-App" 
+### Before starting this Project, you need to install somethings:
+1. Make sure you have a __[Flutter SDK](https://docs.flutter.dev/get-started/install)__ on your computer ( Window / Mac )
+2. Install some libraries in this project :
+```
+flutter pub get
+```
+3. Connect your Project with Firebase : 
+```
+firebase login
+```
+4. Configure a connection to Firebase :
+  - ### __For IOS__ :
+  ```
+  flutterfire configure
+  ```
+  - ### __For Androind__:
+  ```
+  I don't know :v 
+  ```
+ 5. __Run App !!!__
+ 
+ ### __Have a nice day for Coding !!!__
