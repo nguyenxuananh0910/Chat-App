@@ -251,7 +251,7 @@ class _LoginPageState extends State<LoginPage> {
         GestureDetector(
           onTap: _signUp,
           child: const CustomText(
-            text: " Sign Up",
+            text: "Sign Up",
             textSize: 16,
             fontWeight: FontWeight.bold,
             textColor: AppColor.black,

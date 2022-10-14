@@ -36,7 +36,7 @@ class _GroupchatState extends State<Groupchat> {
     return Scaffold(
       appBar: CustomAppBar(
         title: const CustomText(
-          text: 'Chatify',
+          text: 'Group',
           textColor: AppColor.white,
           textSize: 25,
           fontWeight: FontWeight.w700,
@@ -93,7 +93,7 @@ class _GroupchatState extends State<Groupchat> {
                     leading: CircleAvatar(
                       radius: 40,
                       backgroundImage: NetworkImage(groupchat['avataUrl'] == ""
-                          ? "https://png.pngtree.com/png-vector/20190805/ourlarge/pngtree-account-avatar-user-abstract-circle-background-flat-color-icon-png-image_1650938.jpg"
+                          ? "https://png.pngtree.com/png-vector/20191009/ourlarge/pngtree-group-icon-png-image_1796653.jpg"
                           : groupchat['avataUrl']),
                     ),
                     title: StreamBuilder<DocumentSnapshot>(

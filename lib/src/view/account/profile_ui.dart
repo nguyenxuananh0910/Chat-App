@@ -63,9 +63,8 @@ Widget getBody(BuildContext context) {
                     children: [
                       CircleAvatar(
                         radius: 40,
-                        backgroundImage: NetworkImage(snapshot
-                                    .data?['photoURL'] ==
-                                ""
+                        backgroundImage: NetworkImage(snapshot.data?['photoURL'] ==
+                            ""
                             ? "https://png.pngtree.com/png-vector/20190805/ourlarge/pngtree-account-avatar-user-abstract-circle-background-flat-color-icon-png-image_1650938.jpg"
                             : snapshot.data?['photoURL']),
                       ),
@@ -108,7 +107,7 @@ Widget getBody(BuildContext context) {
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                   child: SizedBox(
                     width: 400,
                     height: 50,
@@ -140,7 +139,7 @@ Widget getBody(BuildContext context) {
                                 width: 10,
                               ),
                               CustomText(
-                                text: 'Notifications',
+                                text: 'Account',
                                 textSize: 18,
                                 textColor: AppColor.black,
                                 fontWeight: FontWeight.w500,
@@ -155,7 +154,7 @@ Widget getBody(BuildContext context) {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   child: SizedBox(
                     width: 400,
                     height: 50,
@@ -191,7 +190,7 @@ Widget getBody(BuildContext context) {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   child: SizedBox(
                     width: 400,
                     height: 50,
@@ -227,7 +226,7 @@ Widget getBody(BuildContext context) {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   child: SizedBox(
                     width: 400,
                     height: 50,
@@ -263,7 +262,7 @@ Widget getBody(BuildContext context) {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   child: SizedBox(
                     width: 400,
                     height: 50,
