@@ -23,4 +23,6 @@ class AppColor {
   static const Color loyalBlue = Color(0xFF5A6CEA);
   static const Color woodsmoke = Color(0xFF0E1110);
   static const Color provincialPink = Color(0xFFFEF6ED);
+  static const Color purpleApp = Color(0xff5C33CF);
+  static const Color lightGray = Color(0xff999CA0);
 }

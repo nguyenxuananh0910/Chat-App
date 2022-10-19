@@ -36,7 +36,7 @@ class _MessState extends State<Mess> {
     return Scaffold(
       appBar: CustomAppBar(
         title: const CustomText(
-          text: 'Chatify',
+          text: 'Messenger',
           textColor: AppColor.white,
           textSize: 25,
           fontWeight: FontWeight.w700,

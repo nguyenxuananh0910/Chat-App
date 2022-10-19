@@ -31,6 +31,8 @@ class _accountState extends State<account> {
   final currentUser = Auth().currentUser!;
 
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   late ProfileBloc bloc;
   late Database database;
   String avatar = '';
@@ -43,6 +45,8 @@ class _accountState extends State<account> {
     // TODO: implement initState
     super.initState();
     _nameController.text = currentUser.displayName ?? "";
+    _emailController.text = currentUser.email ?? "";
+    _passwordController.text = "123456";
     database = context.read<Database>();
     bloc = ProfileBloc(database: database);
     avatar = currentUser.photoURL ?? '';
@@ -113,7 +117,7 @@ class _accountState extends State<account> {
     });
   }
 
-  void _changeName() {
+  void _changeProfile() {
     FocusManager.instance.primaryFocus?.unfocus();
     final newName = _nameController.text.trim();
     bloc.updateName(newName);
@@ -125,7 +129,7 @@ class _accountState extends State<account> {
     Widget _buildCameraOverlay() => Icon(
           Icons.camera_alt_outlined,
           size: 40,
-          color: AppColor.primary.withOpacity(0.4),
+          color: AppColor.primary.withOpacity(0.8),
         );
     Widget _buildUploadStatus(UploadTask uploadTask) {
       return StreamBuilder<TaskSnapshot>(
@@ -169,73 +173,147 @@ class _accountState extends State<account> {
       );
     }
 
-    Widget _buildNameEditing() {
+    Widget _editLine(type) {
+      final typeController;
+      switch (type.toString().toLowerCase()) {
+        case "name":
+          typeController = _nameController;
+          break;
+        case "email":
+          typeController = _emailController;
+          break;
+        case "password":
+          typeController = _passwordController;
+          break;
+        default:
+          typeController = "NULL";
+          break;
+      }
       return TextField(
-        controller: _nameController,
+        controller: typeController,
         decoration: const InputDecoration(
-          contentPadding: EdgeInsets.all(5),
+          contentPadding: EdgeInsets.all(0),
         ),
+        style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 25),
         onChanged: (value) => setState(() {}),
       );
     }
 
-    Widget _buildChangeNameButton() {
+    Widget _buildSaveButton() {
       bool isTrue = currentUser.displayName != _nameController.text &&
           _nameController.text.trim().isNotEmpty;
-      return SizedBox(
-        width: double.infinity,
-        height: 50,
-        child: CustomButton(
-          color: AppColor.primary,
-          onPressed: isTrue ? _changeName : null,
-          child: const CustomText(
-            text: 'Change Name',
-            textSize: 15,
-            textColor: AppColor.white,
-            fontWeight: FontWeight.bold,
+      return Container(
+        alignment: Alignment.bottomRight,
+        margin: const EdgeInsets.symmetric(horizontal: 30),
+        child: SizedBox(
+          width: 100,
+          height: 50,
+          child: ElevatedButton(
+            style: TextButton.styleFrom(
+              backgroundColor: AppColor.purpleApp,
+            ),
+            onPressed: isTrue ? _changeProfile : null,
+            child: const CustomText(
+              text: 'Save',
+              textSize: 20,
+              textColor: AppColor.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
+        )
       );
+    }
+
+    Widget _buildEditing(string) {
+      Widget functionString;
+      switch (string) {
+        case "Name":
+          functionString = _editLine("name");
+          break;
+        case "Password":
+          functionString = _editLine("password");
+          break;
+        case "Email":
+          functionString = _editLine("email");
+          break;
+        default:
+          functionString = const Text("NULL Info");
+          break;
+      }
+      return Container(
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          child: Column(
+            children: [
+              Container(
+                  alignment: Alignment.topLeft,
+                  child: Text('$string: ',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: getSuitableColor(
+                            AppColor.lightGray, AppColor.white),
+                      ))),
+              functionString,
+            ],
+          ));
     }
 
     return KeyboardDismisser(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 15,
-              vertical: 15,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(Icons.arrow_back_ios)),
-                  Center(
-                    child: _buildAvatar(),
+           child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
                   ),
-                  Row(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Row(children: const [
+                    Icon(Icons.arrow_back_ios),
+                    Text("Back",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        )),
+                  ]),
+                ),
+                Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 20,
+                    ),
+                    child: const Text("Edit Profile",
+                        style: TextStyle(
+                          fontSize: 35,
+                          fontWeight: FontWeight.w500,
+                          color: AppColor.purpleApp,
+                        ))),
+                Center(
+                  child: _buildAvatar(),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 30
+                  ),
+                  child: Column(
                     children: [
-                      CustomText(
-                        text: 'Name: ',
-                        textSize: 16,
-                        fontWeight: FontWeight.w500,
-                        textColor:
-                            getSuitableColor(AppColor.black, AppColor.white),
-                      ),
-                      Flexible(child: _buildNameEditing())
+                      _buildEditing("Name"),
+                      _buildEditing("Email"),
+                      _buildEditing("Password"),
                     ],
                   ),
-                  const SizedBox(height: 20),
-                  _buildChangeNameButton(),
-                  const SizedBox(height: 20),
-                ],
-              ),
+                ),
+                const SizedBox(height: 20),
+                _buildSaveButton(),
+                const SizedBox(height: 20),
+              ],
             ),
           ),
         ),
@@ -256,8 +334,8 @@ class Avatar extends StatelessWidget {
       child: avatar.isNotEmpty
           ? Image.network(
               avatar,
-              width: 150,
-              height: 150,
+              width: 200,
+              height: 200,
               fit: BoxFit.cover,
               loadingBuilder: (BuildContext context, Widget child,
                   ImageChunkEvent? loadingProgress) {
