@@ -7,8 +7,11 @@ import '../../../theme/colors.dart';
 import 'package:chatappdemo/theme/colors.dart';
 import '../../../services/auth.dart';
 import '../mess/room-chat.dart';
-import '../mess/seach.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
+
+import '../mess/search.dart';
+import 'adduser_ui.dart';
 // ignore: depend_on_referenced_packages
 
 class Groupchat extends StatefulWidget {
@@ -59,6 +62,14 @@ class _GroupchatState extends State<Groupchat> {
         ],
       ),
       body: getBody(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (_) => CreateGroup()));
+        },
+        backgroundColor: AppColor.loyalBlue,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
