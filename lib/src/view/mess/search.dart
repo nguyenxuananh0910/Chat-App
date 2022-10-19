@@ -30,6 +30,7 @@ class SearchUser extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore
@@ -42,30 +43,48 @@ class SearchUser extends SearchDelegate {
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
                 final searchuser = snapshot.data!.docs[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => ChatApp(
-                                groupchatId: null,
-                                listMenber: [searchuser.id],
-                              )));
-                    },
-                    leading: CircleAvatar(
-                      radius: 40,
-                      backgroundImage: NetworkImage(searchuser['photoURL'] == ""
-                          ? "https://png.pngtree.com/png-vector/20190805/ourlarge/pngtree-account-avatar-user-abstract-circle-background-flat-color-icon-png-image_1650938.jpg"
-                          : searchuser['photoURL']),
+                if (searchuser.id != user!.uid) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: ListTile(
+                      onTap: () {
+                        // var data = await _firestore
+                        //     .collection('group')
+                        //     .where('menber', arrayContainsAny: [
+                        //   searchuser.id,
+                        //   user.uid,
+                        // ]).get();
+                        // String? groupid;
+                        // for (final item in data.docs) {
+                        //   print(item.id);
+                        //
+                        //   if ((item.data()['menber'] as List).length == 2) {
+                        //     groupid = item.id;
+                        //   }
+                        // }
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => ChatApp(
+                                  groupchatId: null,
+                                  listMenber: [searchuser.id],
+                                )));
+                      },
+                      leading: CircleAvatar(
+                        radius: 40,
+                        backgroundImage: NetworkImage(searchuser['photoURL'] ==
+                                ""
+                            ? "https://png.pngtree.com/png-vector/20190805/ourlarge/pngtree-account-avatar-user-abstract-circle-background-flat-color-icon-png-image_1650938.jpg"
+                            : searchuser['photoURL']),
+                      ),
+                      title: CustomText(
+                        text: (searchuser["name"]),
+                        textColor: AppColor.black,
+                        textSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                    title: CustomText(
-                      text: (searchuser["name"]),
-                      textColor: AppColor.black,
-                      textSize: 20,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                );
+                  );
+                }
+                return Container();
               },
             );
           } else {

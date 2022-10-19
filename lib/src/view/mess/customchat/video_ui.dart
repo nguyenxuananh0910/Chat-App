@@ -29,7 +29,7 @@ class VideoBubble extends StatelessWidget {
         children: [
           SizedBox(
             width: 350,
-            child: VideoPlayer(videoUrl: message.message),
+            child: VideoWidget(videoUrl: message.message),
           ),
           const SizedBox(
             height: 10,

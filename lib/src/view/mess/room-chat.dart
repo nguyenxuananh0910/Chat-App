@@ -80,10 +80,25 @@ class _ChatAppState extends State<ChatApp> {
   }
 
   void onSendMessage({required int type, String? fileName, String? url}) async {
-    // tao groupid moi
+    // tao groupid 2 user moi
     if (idGroupChat == null) {
       Map<String, dynamic> group = {
         "avataUrl": userTemple?['photoURL'],
+        "chatType": 'Private',
+        "groupName": userTemple!['name'],
+        "menber": [
+          _auth.currentUser!.uid.toString(),
+          userTemple!.id.toString()
+        ],
+      };
+      idGroupChat = (await _firestore.collection('group').add(group)).id;
+      setState(() {});
+    }
+    // tao group nhom
+    if (idGroupChat == null) {
+      Map<String, dynamic> group = {
+        "avataUrl": userTemple?['photoURL'],
+        "chatType": 'Private',
         "groupName": userTemple!['name'],
         "menber": [
           _auth.currentUser!.uid.toString(),
@@ -134,30 +149,77 @@ class _ChatAppState extends State<ChatApp> {
       appBar: PreferredSize(
           preferredSize: const Size.square(65),
           child: AppBar(
-            title: StreamBuilder<DocumentSnapshot>(
-                stream: showInfoRecevier(),
-                builder: (context, snapshot) {
-                  if (snapshot.data != null) {
-                    userTemple = snapshot.data!; // lay thong tin user
-                    return Column(
-                      children: [
-                        CustomText(
-                          text: snapshot.data?['name'],
+            title: idGroupChat != null
+                ? StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('group')
+                        .doc(idGroupChat)
+                        .snapshots(),
+                    builder: (BuildContext context, snapshot) {
+                      if (!snapshot.hasData) return const Text('Loading...');
+                      final groupchat = snapshot.data!;
+                      if (groupchat['groupName'].toString().isNotEmpty) {
+                        return CustomText(
+                          text: groupchat['groupName'],
                           textSize: 25,
                           textColor: AppColor.white,
                           fontWeight: FontWeight.w500,
-                        ),
-                        CustomText(
-                          text: snapshot.data?['status'],
-                          textSize: 12,
-                          textColor: AppColor.white,
-                          fontWeight: FontWeight.w500,
-                        )
-                      ],
-                    );
-                  }
-                  return Container();
-                }),
+                        );
+                      } else {
+                        return StreamBuilder<DocumentSnapshot>(
+                            stream: showInfoRecevier(),
+                            builder: (context, snapshot) {
+                              if (snapshot.data != null) {
+                                userTemple =
+                                    snapshot.data!; // lay thong tin user
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CustomText(
+                                      text: snapshot.data?['name'],
+                                      textSize: 25,
+                                      textColor: AppColor.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    CustomText(
+                                      text: snapshot.data?['status'],
+                                      textSize: 12,
+                                      textColor: AppColor.white,
+                                      fontWeight: FontWeight.w500,
+                                    )
+                                  ],
+                                );
+                              }
+                              return Container();
+                            });
+                      }
+                    },
+                  )
+                : StreamBuilder<DocumentSnapshot>(
+                    stream: showInfoRecevier(),
+                    builder: (context, snapshot) {
+                      if (snapshot.data != null) {
+                        userTemple = snapshot.data!; // lay thong tin user
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomText(
+                              text: snapshot.data?['name'],
+                              textSize: 25,
+                              textColor: AppColor.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            CustomText(
+                              text: snapshot.data?['status'],
+                              textSize: 12,
+                              textColor: AppColor.white,
+                              fontWeight: FontWeight.w500,
+                            )
+                          ],
+                        );
+                      }
+                      return Container();
+                    }),
             backgroundColor: AppColor.loyalBlue,
             elevation: 0.0,
             flexibleSpace: Align(

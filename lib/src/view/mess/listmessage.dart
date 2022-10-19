@@ -114,7 +114,6 @@ class _MessState extends State<Mess> {
                       textSize: 18,
                     ),
                     onTap: () {
-                      // print("${groupchat['menber']}");
                       Navigator.push(
                           context,
                           MaterialPageRoute(
