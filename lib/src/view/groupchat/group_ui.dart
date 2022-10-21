@@ -97,7 +97,7 @@ class _GroupchatState extends State<Groupchat> {
           return ListView.builder(
             itemBuilder: (context, index) {
               final groupchat = snapshot.data!.docs[index];
-              final groupName = snapshot.data!.docs[0]['groupName'];
+
               return Column(
                 children: [
                   ListTile(
@@ -112,7 +112,7 @@ class _GroupchatState extends State<Groupchat> {
                         builder: (context, snapshot) {
                           if (snapshot.data != null) {
                             return CustomText(
-                              text: groupName,
+                              text: groupchat['groupName'],
                               textSize: 18,
                               textColor: AppColor.black,
                               fontWeight: FontWeight.w500,

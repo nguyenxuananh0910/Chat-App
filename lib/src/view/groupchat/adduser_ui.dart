@@ -64,11 +64,31 @@ class _CreateGroupState extends State<CreateGroup> {
       ),
       floatingActionButton: FloatingActionButton(
           backgroundColor: AppColor.loyalBlue,
-          onPressed: () {
+          onPressed: () async {
+            // tao group nhom
+
+            var listid = List<ListMenber>.generate(
+                membersList.length, (index) => membersList[index]);
+            Map<String, dynamic> group = {
+              "avataUrl": '',
+              "chatType": 'Group',
+              "groupName": [
+                ...List.generate(
+                    listid.length, (int index) => listid[index].name),
+                users!.displayName
+              ].join(','),
+              "menber": [
+                ...List.generate(
+                    listid.length, (int index) => listid[index].id),
+                users!.uid
+              ], // tao 1 list new voi do dai = list cu va item la id
+            };
+            var idGroupChat =
+                (await _firestore.collection('group').add(group)).id;
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (_) => ChatApp(
-                      groupchatId: null,
-                      listMenber: [membersList],
+                      groupchatId: idGroupChat,
+                      listMenber: membersList,
                     )));
           },
           child: const Icon(Icons.arrow_forward)),

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'dart:io';
 
+import 'package:chatappdemo/src/view/groupchat/adduser_ui.dart';
 import 'package:chatappdemo/src/view/mess/uploadfile.dart';
 import 'package:chatappdemo/theme/colors.dart';
 
@@ -55,9 +56,9 @@ class _ChatAppState extends State<ChatApp> {
 
   Future selectFile() async {
     final result = await FilePicker.platform.pickFiles(
-        // type: FileType.custom,
-        // allowedExtensions: ['jpg', 'mp4', 'doc'],
-        );
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'mp4', 'doc'],
+    );
     if (result != null) {
       pickfile = result.files.first;
       uploadImage();
@@ -81,33 +82,22 @@ class _ChatAppState extends State<ChatApp> {
 
   void onSendMessage({required int type, String? fileName, String? url}) async {
     // tao groupid 2 user moi
-    if (idGroupChat == null) {
-      Map<String, dynamic> group = {
-        "avataUrl": userTemple?['photoURL'],
-        "chatType": 'Private',
-        "groupName": userTemple!['name'],
-        "menber": [
-          _auth.currentUser!.uid.toString(),
-          userTemple!.id.toString()
-        ],
-      };
-      idGroupChat = (await _firestore.collection('group').add(group)).id;
-      setState(() {});
-    }
-    // tao group nhom
-    if (idGroupChat == null) {
-      Map<String, dynamic> group = {
-        "avataUrl": userTemple?['photoURL'],
-        "chatType": 'Private',
-        "groupName": userTemple!['name'],
-        "menber": [
-          _auth.currentUser!.uid.toString(),
-          userTemple!.id.toString()
-        ],
-      };
-      idGroupChat = (await _firestore.collection('group').add(group)).id;
-      setState(() {});
-    }
+    try {
+      if (idGroupChat == null) {
+        Map<String, dynamic> group = {
+          "avataUrl": userTemple?['photoURL'],
+          "chatType": 'Private',
+          "groupName": "",
+          "menber": [
+            _auth.currentUser!.uid.toString(),
+            userTemple!.id.toString()
+          ],
+        };
+        idGroupChat = (await _firestore.collection('group').add(group)).id;
+        setState(() {});
+      }
+    } catch (e) {}
+
     // gui mess
     String content = '';
     if (type == messageType) {
@@ -151,14 +141,18 @@ class _ChatAppState extends State<ChatApp> {
           child: AppBar(
             title: idGroupChat != null
                 ? StreamBuilder<DocumentSnapshot>(
+                    key: UniqueKey(),
                     stream: FirebaseFirestore.instance
                         .collection('group')
                         .doc(idGroupChat)
                         .snapshots(),
                     builder: (BuildContext context, snapshot) {
                       if (!snapshot.hasData) return const Text('Loading...');
+                      // if (snapshot.connectionState == ConnectionState.waiting) {
+                      //   return const Text('Loading...');
+                      // }
                       final groupchat = snapshot.data!;
-                      if (groupchat['groupName'].toString().isNotEmpty) {
+                      if (groupchat['groupName'] != "") {
                         return CustomText(
                           text: groupchat['groupName'],
                           textSize: 25,
@@ -166,60 +160,11 @@ class _ChatAppState extends State<ChatApp> {
                           fontWeight: FontWeight.w500,
                         );
                       } else {
-                        return StreamBuilder<DocumentSnapshot>(
-                            stream: showInfoRecevier(),
-                            builder: (context, snapshot) {
-                              if (snapshot.data != null) {
-                                userTemple =
-                                    snapshot.data!; // lay thong tin user
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CustomText(
-                                      text: snapshot.data?['name'],
-                                      textSize: 25,
-                                      textColor: AppColor.white,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    CustomText(
-                                      text: snapshot.data?['status'],
-                                      textSize: 12,
-                                      textColor: AppColor.white,
-                                      fontWeight: FontWeight.w500,
-                                    )
-                                  ],
-                                );
-                              }
-                              return Container();
-                            });
+                        return infochat();
                       }
                     },
                   )
-                : StreamBuilder<DocumentSnapshot>(
-                    stream: showInfoRecevier(),
-                    builder: (context, snapshot) {
-                      if (snapshot.data != null) {
-                        userTemple = snapshot.data!; // lay thong tin user
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomText(
-                              text: snapshot.data?['name'],
-                              textSize: 25,
-                              textColor: AppColor.white,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            CustomText(
-                              text: snapshot.data?['status'],
-                              textSize: 12,
-                              textColor: AppColor.white,
-                              fontWeight: FontWeight.w500,
-                            )
-                          ],
-                        );
-                      }
-                      return Container();
-                    }),
+                : infochat(),
             backgroundColor: AppColor.loyalBlue,
             elevation: 0.0,
             flexibleSpace: Align(
@@ -424,5 +369,34 @@ class _ChatAppState extends State<ChatApp> {
         ),
       ),
     );
+  }
+
+  Widget infochat() {
+    return StreamBuilder<DocumentSnapshot>(
+        key: UniqueKey(),
+        stream: showInfoRecevier(),
+        builder: (context, snapshot) {
+          if (snapshot.data != null) {
+            userTemple = snapshot.data!; // lay thong tin user
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomText(
+                  text: snapshot.data?['name'],
+                  textSize: 25,
+                  textColor: AppColor.white,
+                  fontWeight: FontWeight.w500,
+                ),
+                CustomText(
+                  text: snapshot.data?['status'],
+                  textSize: 12,
+                  textColor: AppColor.white,
+                  fontWeight: FontWeight.w500,
+                )
+              ],
+            );
+          }
+          return Container();
+        });
   }
 }
