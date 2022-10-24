@@ -103,13 +103,16 @@ class _CreateGroupState extends State<CreateGroup> {
         child: Column(
           children: [
             SizedBox(
-              height: 120,
+              height: 100,
               width: double.infinity,
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.group,
-                    size: 50,
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: const Icon(
+                      Icons.group,
+                      size: 35,
+                    ),
                   ),
                   ListView.builder(
                       //list 2
