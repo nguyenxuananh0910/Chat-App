@@ -301,14 +301,14 @@ class _ChatAppState extends State<ChatApp> {
   Widget getBottomBar() {
     var size = MediaQuery.of(context).size;
     return Container(
-      height: 80,
+      height: 90,
       decoration: BoxDecoration(
         color: Colors.grey[200]!,
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GestureDetector(
@@ -359,65 +359,80 @@ class _ChatAppState extends State<ChatApp> {
 
   Widget showFile() {
     return SizedBox(
-      height: 60,
+      height: 70,
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 15,
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                IconButton(
+                TextButton(
                     onPressed: () {
                       selectFile();
                     },
-                    icon: const Icon(
-                      Icons.photo_library,
-                      size: 30,
-                    )),
-                const CustomText(
-                  text: 'gallery',
-                  textSize: 18,
-                  textColor: AppColor.black,
-                  fontWeight: FontWeight.w400,
-                ),
+                    child: Row(children: [
+                      const Icon(
+                        Icons.photo_library,
+                        size: 30,
+                      ),
+                      Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: const Text("Gallery",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: AppColor.black,
+                                fontWeight: FontWeight.w400,
+                              )))
+                    ])),
               ],
             ),
             Row(
               children: [
-                IconButton(
+                TextButton(
                     onPressed: () {
-                      getCameraImages();
+                      print("File");
                     },
-                    icon: const Icon(
-                      Icons.camera_alt_outlined,
-                      size: 30,
-                    )),
-                const CustomText(
-                  text: 'camera',
-                  textSize: 18,
-                  textColor: AppColor.black,
-                  fontWeight: FontWeight.w400,
-                ),
+                    child: Row(children: [
+                      const Icon(
+                        Icons.camera_alt_outlined,
+                        size: 30,
+                      ),
+                      Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: const Text("Camera",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: AppColor.black,
+                                fontWeight: FontWeight.w400,
+                              )))
+                    ])),
               ],
             ),
             Row(
               children: [
-                IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.attach_file_sharp,
-                      size: 30,
-                    )),
-                const CustomText(
-                  text: 'file',
-                  textSize: 18,
-                  textColor: AppColor.black,
-                  fontWeight: FontWeight.w400,
-                ),
+                TextButton(
+                    onPressed: () {
+                      
+                    },
+                    child: Row(children: [
+                      const Icon(
+                        Icons.attach_file_sharp,
+                        size: 30,
+                      ),
+                      Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: const Text("File",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: AppColor.black,
+                                fontWeight: FontWeight.w400,
+                              )))
+                    ])),
               ],
             ),
           ],
