@@ -19,7 +19,7 @@ class ImageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         mainAxisAlignment:
             (isMe ? MainAxisAlignment.end : MainAxisAlignment.start),

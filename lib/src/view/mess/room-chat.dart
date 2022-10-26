@@ -1,13 +1,12 @@
 import 'dart:async';
 
 import 'dart:io';
-
-import 'package:chatappdemo/src/view/groupchat/adduser_ui.dart';
 import 'package:chatappdemo/src/view/mess/uploadfile.dart';
 import 'package:chatappdemo/theme/colors.dart';
-
+import 'package:flutter/foundation.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-
+import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -33,7 +32,11 @@ class ChatApp extends StatefulWidget {
 }
 
 class _ChatAppState extends State<ChatApp> {
+  File? imageFile;
+  File? file;
+  PlatformFile? pickfile;
   bool isloading = false;
+  UploadTask? uploadTask;
   final TextEditingController _message = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -56,18 +59,28 @@ class _ChatAppState extends State<ChatApp> {
 
   Future selectFile() async {
     final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'mp4', 'doc'],
-    );
+        // type: FileType.custom,
+        // allowedExtensions: ['jpg', 'mp4', 'doc'],
+        );
     if (result != null) {
       pickfile = result.files.first;
-      uploadImage();
+      uploadImage(File(pickfile!.path!));
     }
   }
 
-  Future uploadImage() async {
-    final path = 'file/${pickfile!.name}';
-    final file = File(pickfile!.path!);
+  Future getCameraImages() async {
+    ImagePicker picker = ImagePicker();
+    await picker.pickImage(source: ImageSource.camera).then((xFile) {
+      if (xFile != null) {
+        imageFile = File(xFile.path);
+        uploadImage(imageFile!);
+      }
+    });
+  }
+
+  Future uploadImage(File file) async {
+    final path = 'file/${file.path.split('/').last}';
+
     int type = checkTypeOfFile(path);
     final ref = FirebaseStorage.instance.ref().child(path);
     uploadTask = ref.putFile(file);
@@ -75,7 +88,9 @@ class _ChatAppState extends State<ChatApp> {
     final snapshot = await uploadTask!.whenComplete(() {});
 
     final urlDownload = await snapshot.ref.getDownloadURL();
-    print('Dowlink: $urlDownload');
+    if (kDebugMode) {
+      print('Dowlink: $urlDownload');
+    }
 
     onSendMessage(type: type, fileName: urlDownload);
   }
@@ -88,6 +103,7 @@ class _ChatAppState extends State<ChatApp> {
           "avataUrl": userTemple?['photoURL'],
           "chatType": 'Private',
           "groupName": "",
+          "lastmessages": "",
           "menber": [
             _auth.currentUser!.uid.toString(),
             userTemple!.id.toString()
@@ -115,9 +131,16 @@ class _ChatAppState extends State<ChatApp> {
       };
 
       _message.clear();
-      _firestore.collection('messages').add(messages);
+      var idmessage = await _firestore.collection('messages').add(messages);
+
+      Map<String, dynamic> groupupdate = {
+        "lastmessages": idmessage.id,
+      };
+      await _firestore.collection('group').doc(idGroupChat).update(groupupdate);
     } else {
-      print("Enter Some Text");
+      if (kDebugMode) {
+        print("Enter Some Text");
+      }
     }
   }
 
@@ -246,7 +269,7 @@ class _ChatAppState extends State<ChatApp> {
   Widget getBottomBar() {
     var size = MediaQuery.of(context).size;
     return Container(
-      height: 90,
+      height: 80,
       decoration: BoxDecoration(
         color: Colors.grey[200]!,
       ),
@@ -340,7 +363,7 @@ class _ChatAppState extends State<ChatApp> {
               children: [
                 TextButton(
                     onPressed: () {
-                      print("File");
+                      getCameraImages();
                     },
                     child: Row(children: [
                       const Icon(
@@ -361,9 +384,7 @@ class _ChatAppState extends State<ChatApp> {
             Row(
               children: [
                 TextButton(
-                    onPressed: () {
-                      
-                    },
+                    onPressed: () {},
                     child: Row(children: [
                       const Icon(
                         Icons.attach_file_sharp,

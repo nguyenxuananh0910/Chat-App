@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api, depend_on_referenced_packages
+
 import 'package:flutter/material.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -7,7 +10,7 @@ import '../../../theme/colors.dart';
 import '../mess/room-chat.dart';
 
 class CreateGroup extends StatefulWidget {
-  CreateGroup({Key? key}) : super(key: key);
+  const CreateGroup({Key? key}) : super(key: key);
 
   @override
   _CreateGroupState createState() => _CreateGroupState();
@@ -16,7 +19,6 @@ class CreateGroup extends StatefulWidget {
 class _CreateGroupState extends State<CreateGroup> {
   final List<ListMenber> membersList = [];
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final users = FirebaseAuth.instance.currentUser;
 
   void addMembers(DocumentSnapshot? user) {
@@ -72,6 +74,7 @@ class _CreateGroupState extends State<CreateGroup> {
             Map<String, dynamic> group = {
               "avataUrl": '',
               "chatType": 'Group',
+              "lastmessages": "",
               "groupName": [
                 ...List.generate(
                     listid.length, (int index) => listid[index].name),
@@ -125,7 +128,6 @@ class _CreateGroupState extends State<CreateGroup> {
                           child: Stack(
                             children: [
                               CircleAvatar(
-                                radius: 40,
                                 backgroundImage: NetworkImage(membersList[index]
                                             .photoURL ==
                                         ""

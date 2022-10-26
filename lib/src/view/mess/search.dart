@@ -47,22 +47,22 @@ class SearchUser extends SearchDelegate {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: ListTile(
-                      onTap: () {
-                        // var data = await _firestore
-                        //     .collection('group')
-                        //     .where('menber', arrayContainsAny: [
-                        //   searchuser.id,
-                        //   user.uid,
-                        // ]).get();
-                        // String? groupid;
-                        // for (final item in data.docs) {
-                        //   print(item.id);
+                      onTap: () async {
+                        //   var data = await _firestore
+                        //       .collection('group')
+                        //       .where('menber', arrayContainsAny: [
+                        //     searchuser.id,
+                        //     user.uid,
+                        //   ]).get();
+                        //   String? groupid;
+                        //   for (final item in data.docs) {
+                        //     print(item.id);
                         //
-                        //   if ((item.data()['menber'] as List).length == 2) {
-                        //     groupid = item.id;
+                        //     if ((item.data()['menber'] as List).length == 2) {
+                        //       groupid = item.id;
+                        //     }
                         //   }
-                        // }
-                        Navigator.of(context).push(MaterialPageRoute(
+                        await Navigator.of(context).push(MaterialPageRoute(
                             builder: (_) => ChatApp(
                                   groupchatId: null,
                                   listMenber: [searchuser.id],
