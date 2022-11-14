@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'dart:io';
-import 'package:chatappdemo/src/view/mess/uploadfile.dart';
+import 'package:chatappdemo/src/view/mess/updategroup.dart';
 import 'package:chatappdemo/theme/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
@@ -11,6 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/components/custom_text.dart';
+import '../../../services/notifications.dart';
 import '../../../services/auth.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../../utils/kind_of_file.dart';
@@ -42,6 +43,7 @@ class _ChatAppState extends State<ChatApp> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final currentUser = Auth().currentUser;
   String? idGroupChat;
+  String? mgsa;
   DocumentSnapshot? userTemple;
   @override
   void initState() {
@@ -95,6 +97,18 @@ class _ChatAppState extends State<ChatApp> {
     onSendMessage(type: type, fileName: urlDownload);
   }
 
+  // show info
+  Stream<DocumentSnapshot> showInfoRecevier() {
+    String a = '';
+    for (var item in widget.listMenber ?? []) {
+      if (item.toString() != currentUser!.uid) {
+        a = item.toString().trim();
+      }
+    }
+
+    return FirebaseFirestore.instance.collection('users').doc(a).snapshots();
+  }
+
   void onSendMessage({required int type, String? fileName, String? url}) async {
     // tao groupid 2 user moi
     try {
@@ -132,7 +146,7 @@ class _ChatAppState extends State<ChatApp> {
 
       _message.clear();
       var idmessage = await _firestore.collection('messages').add(messages);
-
+      // late mess
       Map<String, dynamic> groupupdate = {
         "lastmessages": idmessage.id,
       };
@@ -142,18 +156,9 @@ class _ChatAppState extends State<ChatApp> {
         print("Enter Some Text");
       }
     }
-  }
 
-  // show info
-  Stream<DocumentSnapshot> showInfoRecevier() {
-    String a = '';
-    for (var item in widget.listMenber ?? []) {
-      if (item.toString() != currentUser!.uid) {
-        a = item.toString().trim();
-      }
-    }
-
-    return FirebaseFirestore.instance.collection('users').doc(a).snapshots();
+    LocalNotificationService.sendNotification(
+        title: "new message", message: content, token: userTemple?['msgToken']);
   }
 
   @override
@@ -212,7 +217,13 @@ class _ChatAppState extends State<ChatApp> {
                 icon: const Icon(Icons.videocam),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              UpDateGroup(Idchat: idGroupChat)));
+                },
                 icon: const Icon(Icons.more_vert),
               ),
             ],
@@ -245,6 +256,7 @@ class _ChatAppState extends State<ChatApp> {
                                   var chat = snapshot.data!.docs[index];
                                   final Message message =
                                       Message.fromDocument(chat);
+
                                   bool isMe =
                                       message.sendby == currentUser!.uid;
                                   return ChatBubble(
@@ -414,17 +426,18 @@ class _ChatAppState extends State<ChatApp> {
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             userTemple = snapshot.data!; // lay thong tin user
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(
-                  text: snapshot.data?['name'],
+                  text: userTemple?['name'],
                   textSize: 25,
                   textColor: AppColor.white,
                   fontWeight: FontWeight.w500,
                 ),
                 CustomText(
-                  text: snapshot.data?['status'],
+                  text: userTemple?['status'],
                   textSize: 12,
                   textColor: AppColor.white,
                   fontWeight: FontWeight.w500,

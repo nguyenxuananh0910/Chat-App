@@ -228,6 +228,7 @@ class _CreateGroupState extends State<CreateGroup> {
                                 width: 15,
                               ),
                               Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   CustomText(
                                     text: (user["name"]),

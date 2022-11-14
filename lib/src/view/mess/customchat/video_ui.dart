@@ -25,11 +25,11 @@ class VideoBubble extends StatelessWidget {
       child: Column(
         mainAxisAlignment:
             (isMe ? MainAxisAlignment.end : MainAxisAlignment.start),
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           SizedBox(
             width: 350,
-            child: VideoWidget(videoUrl: message.message),
+            child: VideoPlayer(videoUrl: message.message),
           ),
           const SizedBox(
             height: 10,
@@ -37,7 +37,7 @@ class VideoBubble extends StatelessWidget {
           Row(
             mainAxisAlignment:
                 (isMe ? MainAxisAlignment.end : MainAxisAlignment.start),
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               CustomText(
                 text: dayFormat(message.time),

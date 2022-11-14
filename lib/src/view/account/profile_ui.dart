@@ -1,3 +1,4 @@
+import 'package:chatappdemo/src/view/account/security.dart';
 import 'package:chatappdemo/src/view/account/updateprofile.dart';
 import 'package:chatappdemo/theme/colors.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import '../../../core/components/customappbar.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../services/database.dart';
+import '../pages/contact.dart';
 
 class ProfileUI extends StatefulWidget {
   const ProfileUI({Key? key}) : super(key: key);
@@ -63,8 +65,9 @@ Widget getBody(BuildContext context) {
                     children: [
                       CircleAvatar(
                         radius: 40,
-                        backgroundImage: NetworkImage(snapshot.data?['photoURL'] ==
-                            ""
+                        backgroundImage: NetworkImage(snapshot
+                                    .data?['photoURL'] ==
+                                ""
                             ? "https://png.pngtree.com/png-vector/20190805/ourlarge/pngtree-account-avatar-user-abstract-circle-background-flat-color-icon-png-image_1650938.jpg"
                             : snapshot.data?['photoURL']),
                       ),
@@ -196,7 +199,10 @@ Widget getBody(BuildContext context) {
                     height: 50,
                     child: CustomButton(
                       color: Colors.grey[200]!,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => Security()));
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -232,7 +238,10 @@ Widget getBody(BuildContext context) {
                     height: 50,
                     child: CustomButton(
                       color: Colors.grey[200]!,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => Contacts()));
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
