@@ -1,157 +1,58 @@
-import 'dart:async';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-class VideoWidget extends StatefulWidget {
+class VideoPlayer extends StatefulWidget {
+  const VideoPlayer({Key? key, required this.videoUrl}) : super(key: key);
   final String videoUrl;
 
-  const VideoWidget({Key? key, required this.videoUrl}) : super(key: key);
-
   @override
-  VideoWidgetState createState() => VideoWidgetState();
+  State<VideoPlayer> createState() => _VideoPlayerState();
 }
 
-class VideoWidgetState extends State<VideoWidget> {
-  late VideoPlayerController _controller;
-  bool _isPlaying = false;
+class _VideoPlayerState extends State<VideoPlayer> {
+  late VideoPlayerController videoPlayerController;
+  ChewieController? _chewieController;
 
-  late Widget videoStatusAnimation;
+  Future<void> initializePlayer() async {
+    videoPlayerController = VideoPlayerController.network(widget.videoUrl);
+    await videoPlayerController.initialize();
+    _createChewieController();
+    setState(() {});
+  }
+
+  void _createChewieController() {
+    _chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      autoPlay: true,
+      looping: true,
+      showControlsOnInitialize: false,
+    );
+  }
 
   @override
   void initState() {
     super.initState();
-
-    videoStatusAnimation = Container();
-
-    _controller = VideoPlayerController.network(widget.videoUrl)
-      ..addListener(() {
-        final bool isPlaying = _controller.value.isPlaying;
-        if (isPlaying != _isPlaying) {
-          setState(() {
-            _isPlaying = isPlaying;
-          });
-        }
-      })
-      ..initialize().then((_) {
-        Timer(const Duration(milliseconds: 0), () {
-          if (!mounted) return;
-
-          setState(() {});
-          _controller.play();
-        });
-      });
+    initializePlayer();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    videoPlayerController.dispose();
+    _chewieController?.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => AspectRatio(
-        aspectRatio: 16 / 9,
-        child: _controller.value.isInitialized ? videoPlayer() : Container(),
-      );
-
-  Widget videoPlayer() => Stack(
-        children: <Widget>[
-          video(),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: VideoProgressIndicator(
-              _controller,
-              allowScrubbing: true,
-              padding: const EdgeInsets.all(16.0),
-            ),
-          ),
-          Center(child: videoStatusAnimation),
-        ],
-      );
-
-  Widget video() => GestureDetector(
-        child: VideoPlayer(_controller),
-        onTap: () {
-          if (!_controller.value.isInitialized) {
-            return;
-          }
-          if (_controller.value.isPlaying) {
-            videoStatusAnimation = const FadeAnimation(
-                child: Icon(
-              Icons.pause,
-              size: 100.0,
-              color: Colors.white,
-            ));
-            _controller.pause();
-          } else {
-            videoStatusAnimation = const FadeAnimation(
-                child: Icon(
-              Icons.play_arrow,
-              size: 100.0,
-              color: Colors.white,
-            ));
-            _controller.play();
-          }
-        },
-      );
-}
-
-class FadeAnimation extends StatefulWidget {
-  // ignore: use_key_in_widget_constructors
-  const FadeAnimation(
-      {required this.child,
-      this.duration = const Duration(milliseconds: 1000)});
-
-  final Widget child;
-  final Duration duration;
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _FadeAnimationState createState() => _FadeAnimationState();
-}
-
-class _FadeAnimationState extends State<FadeAnimation>
-    with SingleTickerProviderStateMixin {
-  late AnimationController animationController;
-
-  @override
-  void initState() {
-    super.initState();
-    animationController =
-        AnimationController(duration: widget.duration, vsync: this);
-    animationController.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-    animationController.forward(from: 0.0);
+  Widget build(BuildContext context) {
+    return Center(
+      child: AspectRatio(
+        aspectRatio: 18 / 9,
+        child: _chewieController != null &&
+                _chewieController!.videoPlayerController.value.isInitialized
+            ? Chewie(controller: _chewieController!)
+            : const Center(child: CircularProgressIndicator(strokeWidth: 1)),
+      ),
+    );
   }
-
-  @override
-  void deactivate() {
-    animationController.stop();
-    super.deactivate();
-  }
-
-  @override
-  void didUpdateWidget(FadeAnimation oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.child != widget.child) {
-      animationController.forward(from: 0.0);
-    }
-  }
-
-  @override
-  void dispose() {
-    animationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => animationController.isAnimating
-      ? Opacity(
-          opacity: 1.0 - animationController.value,
-          child: widget.child,
-        )
-      : Container();
 }

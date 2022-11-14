@@ -120,11 +120,51 @@ class _GroupchatState extends State<Groupchat> {
                           }
                           return Container();
                         }),
-                    subtitle: const CustomText(
-                      text: 'hello',
-                      textColor: Color(0xff999CA0),
-                      textSize: 18,
-                    ),
+                    subtitle: StreamBuilder<DocumentSnapshot>(
+                        key: UniqueKey(),
+                        stream: FirebaseFirestore.instance
+                            .collection('messages')
+                            .doc(groupchat['lastmessages'])
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.data != null) {
+                            final lastmess = snapshot.data!;
+                            return Row(
+                              children: [
+                                FutureBuilder<DocumentSnapshot>(
+                                    key: UniqueKey(),
+                                    future: FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(lastmess['sendby'])
+                                        .get(),
+                                    builder: (context, snapshot1) {
+                                      if (snapshot1.hasData) {
+                                        final usermess = snapshot1.data!;
+                                        return CustomText(
+                                          text: '${usermess['name']}: ',
+                                          textSize: 18,
+                                          textColor: AppColor.lightGray,
+                                          fontWeight: FontWeight.w400,
+                                        );
+                                      }
+                                      // if (snapshot1.data == null) {
+                                      //   return SizedBox.shrink();
+                                      // }
+                                      return const SizedBox.shrink();
+                                    }),
+                                CustomText(
+                                  text: lastmess['type'] == 1
+                                      ? lastmess['message']
+                                      : "tep dinh kem &",
+                                  textSize: 18,
+                                  textColor: AppColor.lightGray,
+                                  fontWeight: FontWeight.w400,
+                                )
+                              ],
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        }),
                     onTap: () {
                       // print("${groupchat['menber']}");
                       Navigator.push(

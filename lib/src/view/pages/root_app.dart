@@ -1,7 +1,10 @@
+import 'package:chatappdemo/services/Notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:get/get.dart';
 import '../../../theme/colors.dart';
 import '../../domain/root_app_json.dart';
 import '../account/updateprofile.dart';

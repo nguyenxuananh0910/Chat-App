@@ -1,5 +1,6 @@
 //Libary
 import 'dart:async';
+import 'package:chatappdemo/services/Notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -23,6 +24,7 @@ Future<void> main() async {
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
+    LocalNotificationService.initialize();
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     initMsg = await FirebaseMessaging.instance.getInitialMessage();
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
@@ -47,6 +49,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     setStatus("online");
+    FirebaseMessaging.instance.getInitialMessage();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print(" WW = ${message.notification!.title}");
+      print(" WW = ${message.notification!.body}");
+      LocalNotificationService.display(message);
+    });
+    LocalNotificationService.streToken();
   }
 
   @override

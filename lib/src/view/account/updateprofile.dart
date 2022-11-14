@@ -4,11 +4,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../theme/colors.dart';
 import 'profile_bloc.dart';
@@ -31,12 +32,12 @@ class _accountState extends State<account> {
   final currentUser = Auth().currentUser!;
 
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _newpass = TextEditingController();
   late ProfileBloc bloc;
   late Database database;
   String avatar = '';
-
+  bool _showPass = false;
   UploadTask? task;
   bool isUploadNewAvatar = false;
 
@@ -44,18 +45,24 @@ class _accountState extends State<account> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _nameController.text = currentUser.displayName ?? "";
-    _emailController.text = currentUser.email ?? "";
-    _passwordController.text = "123456";
     database = context.read<Database>();
     bloc = ProfileBloc(database: database);
     avatar = currentUser.photoURL ?? '';
+    _nameController.text = currentUser.displayName ?? "";
+
+    // _oldpass.text = LocalVariable.passwd;
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     super.dispose();
+  }
+
+  void onToggleShowPass() {
+    setState(() {
+      _showPass = !_showPass;
+    });
   }
 
   Future<void> onPressChangeImage() async {
@@ -71,19 +78,10 @@ class _accountState extends State<account> {
         bool? confirm = await showDialog<bool>(
           context: context,
           barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            title: const Text("Permission denied "),
-            content: const Text(
+          builder: (context) => const AlertDialog(
+            title: Text("Permission denied "),
+            content: Text(
                 'Without this permission, the app is unable access to your gallery to select picture.Do you want to enable this permission'),
-            actions: [
-              TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Cancel')),
-              // The "Yes" button
-              TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: const Text('Yes')),
-            ],
           ),
         );
         if (confirm!) {
@@ -173,96 +171,55 @@ class _accountState extends State<account> {
       );
     }
 
-    Widget _editLine(type) {
-      final typeController;
-      switch (type.toString().toLowerCase()) {
-        case "name":
-          typeController = _nameController;
-          break;
-        case "email":
-          typeController = _emailController;
-          break;
-        case "password":
-          typeController = _passwordController;
-          break;
-        default:
-          typeController = "NULL";
-          break;
-      }
-      return TextField(
-        controller: typeController,
-        decoration: const InputDecoration(
-          contentPadding: EdgeInsets.all(0),
-        ),
-        style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 25),
-        onChanged: (value) => setState(() {}),
-      );
+    void _changePassword(
+        {required String currentPassword, required String newPassword}) async {
+      final user = await FirebaseAuth.instance.currentUser;
+      final cred = EmailAuthProvider.credential(
+          email: user!.email!, password: currentPassword);
+
+      user.reauthenticateWithCredential(cred).then((value) {
+        user.updatePassword(newPassword).then((_) {
+          //Success, do something
+        }).catchError((error) {
+          //Error, show something
+        });
+      }).catchError((err) {});
     }
 
     Widget _buildSaveButton() {
-      bool isTrue = currentUser.displayName != _nameController.text &&
-          _nameController.text.trim().isNotEmpty;
       return Container(
-        alignment: Alignment.bottomRight,
-        margin: const EdgeInsets.symmetric(horizontal: 30),
-        child: SizedBox(
-          width: 100,
-          height: 50,
-          child: ElevatedButton(
-            style: TextButton.styleFrom(
-              backgroundColor: AppColor.purpleApp,
+          alignment: Alignment.bottomRight,
+          margin: const EdgeInsets.symmetric(horizontal: 30),
+          child: SizedBox(
+            width: 100,
+            height: 50,
+            child: ElevatedButton(
+              style: TextButton.styleFrom(
+                backgroundColor: AppColor.purpleApp,
+              ),
+              onPressed: () {
+                _changePassword(
+                    currentPassword: _passwordController.text,
+                    newPassword: _newpass.text);
+                final newName = _nameController.text.trim();
+                var collection = FirebaseFirestore.instance.collection('users');
+                collection.doc(currentUser.uid).update({'name': newName});
+                Navigator.pop(context);
+              },
+              child: const CustomText(
+                text: 'Save',
+                textSize: 20,
+                textColor: AppColor.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            onPressed: isTrue ? _changeProfile : null,
-            child: const CustomText(
-              text: 'Save',
-              textSize: 20,
-              textColor: AppColor.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        )
-      );
-    }
-
-    Widget _buildEditing(string) {
-      Widget functionString;
-      switch (string) {
-        case "Name":
-          functionString = _editLine("name");
-          break;
-        case "Password":
-          functionString = _editLine("password");
-          break;
-        case "Email":
-          functionString = _editLine("email");
-          break;
-        default:
-          functionString = const Text("NULL Info");
-          break;
-      }
-      return Container(
-          margin: const EdgeInsets.symmetric(vertical: 10),
-          child: Column(
-            children: [
-              Container(
-                  alignment: Alignment.topLeft,
-                  child: Text('$string: ',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: getSuitableColor(
-                            AppColor.lightGray, AppColor.white),
-                      ))),
-              functionString,
-            ],
           ));
     }
 
     return KeyboardDismisser(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
         body: SafeArea(
-           child: SingleChildScrollView(
+          child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -298,15 +255,107 @@ class _accountState extends State<account> {
                   child: _buildAvatar(),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 30
-                  ),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                   child: Column(
                     children: [
-                      _buildEditing("Name"),
-                      _buildEditing("Email"),
-                      _buildEditing("Password"),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Text(
+                                'Email :',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                currentUser.email!,
+                                style: const TextStyle(fontSize: 20),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          CustomText(
+                            text: 'Name:',
+                            textSize: 16,
+                            fontWeight: FontWeight.w500,
+                            textColor: getSuitableColor(
+                                AppColor.black, AppColor.white),
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Flexible(
+                            child: TextField(
+                              controller: _nameController,
+                              decoration: const InputDecoration(
+                                contentPadding: EdgeInsets.all(5),
+                              ),
+                              // onChanged: (value) => setState(() {}),
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextField(
+                        controller: _passwordController,
+                        obscureText: !_showPass,
+                        decoration: InputDecoration(
+                            suffix: GestureDetector(
+                              onTap: onToggleShowPass,
+                              child: Text(_showPass ? "HIDE" : "Show",
+                                  style: const TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide: const BorderSide(
+                                    color: Colors.white, width: 15)),
+                            filled: true,
+                            fillColor: Colors.white60,
+                            labelText: 'Password',
+                            prefixIcon: const Icon(Icons.lock)),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextField(
+                        controller: _newpass,
+                        obscureText: !_showPass,
+                        decoration: InputDecoration(
+                            suffix: GestureDetector(
+                              onTap: onToggleShowPass,
+                              child: Text(_showPass ? "HIDE" : "Show",
+                                  style: const TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide: const BorderSide(
+                                    color: Colors.white, width: 15)),
+                            filled: true,
+                            fillColor: Colors.white60,
+                            labelText: 'New Password',
+                            prefixIcon: const Icon(Icons.lock)),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
                     ],
                   ),
                 ),
