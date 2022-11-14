@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
-
+import 'package:get/get.dart';
 import '../../../theme/colors.dart';
 import 'login_bloc.dart';
 import '../../../core/components/custom_button.dart';
 import '../../../core/components/custom_text.dart';
-
 import '../../../services/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../sign_up/sign_up_ui.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -25,7 +25,8 @@ class _LoginPageState extends State<LoginPage> {
   late LoginBloc bloc;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  final TextEditingController _forgetEmailController = TextEditingController();
+  final _firebaseAuth = FirebaseAuth.instance;
   Future<void> _signInWithEmail() async {
     FocusManager.instance.primaryFocus?.unfocus();
     try {
@@ -34,6 +35,15 @@ class _LoginPageState extends State<LoginPage> {
     } on FirebaseException catch (e) {
       Fluttertoast.showToast(msg: e.message.toString());
     }
+  }
+
+  void forgetPassWord(String email) {
+    _firebaseAuth.sendPasswordResetEmail(email: email).then((value) {
+      Get.back();
+      Get.snackbar("Email sent", "We have sent password reset email");
+    }).catchError((e) {
+      print("Error in sending password reset email  is $e");
+    });
   }
 
   void _signUp() {
@@ -120,6 +130,8 @@ class _LoginPageState extends State<LoginPage> {
                             const SizedBox(height: 20),
                             _buildPasswordTextField(),
                             const SizedBox(height: 30),
+                            _buildForPass(),
+                            const SizedBox(height: 20),
                             _buildLoginBtn(),
                             const SizedBox(height: 15),
                             const CustomText(
@@ -189,6 +201,56 @@ class _LoginPageState extends State<LoginPage> {
           onEditingComplete: _signInWithEmail,
         );
       },
+    );
+  }
+
+  Widget _buildForPass() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        InkWell(
+          onTap: () {
+            Get.defaultDialog(
+                title: 'Forget PassWord?',
+                content: Column(
+                  children: [
+                    TextField(
+                      controller: _forgetEmailController,
+                      decoration: InputDecoration(
+                        icon: const Icon(Icons.email, color: AppColor.doveGray),
+                        labelText: 'Email',
+                        labelStyle: const TextStyle(color: AppColor.doveGray),
+                        hintText: 'example@example.com',
+                        hintStyle:
+                            TextStyle(color: AppColor.white.withOpacity(0.5)),
+                      ),
+                      cursorColor: AppColor.white,
+                      style: const TextStyle(color: AppColor.black),
+                      autocorrect: false,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    MaterialButton(
+                      onPressed: () {
+                        forgetPassWord(_forgetEmailController.text.trim());
+                      },
+                      color: Colors.blue,
+                      child: Text("Sent"),
+                      minWidth: double.infinity,
+                    )
+                  ],
+                ));
+          },
+          child: CustomText(
+              text: 'Forgot password?',
+              textSize: 15,
+              textColor: AppColor.black,
+              fontWeight: FontWeight.w500),
+        )
+      ],
     );
   }
 
