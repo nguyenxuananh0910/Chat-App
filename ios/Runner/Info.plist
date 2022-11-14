@@ -44,6 +44,7 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>NSCameraUsageDescription</key>
     <string>My description about why I need this capability</string>
     <key>NSPhotoLibraryUsageDescription</key>
@@ -52,6 +53,6 @@
     <string>My description about why I need this capability</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>My description about why I need this capability</string>
-	<true/>
+
 </dict>
 </plist>
