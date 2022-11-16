@@ -50,7 +50,11 @@ class _UpDateGroupState extends State<UpDateGroup> {
               if (!snapshot.hasData) return const Text('Loading...');
               final groupchat = snapshot.data!;
               _nameController.text = groupchat['groupName'];
+              final List<String> listUser = List.generate(
+                  groupchat['menber'].toList().length,
+                  (index) => groupchat['menber'][index].toString());
               return Column(
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Center(
                     child: CircleAvatar(
@@ -86,11 +90,60 @@ class _UpDateGroupState extends State<UpDateGroup> {
                   const SizedBox(
                     height: 40,
                   ),
-                  _buildChangeNameButton()
+                  _buildChangeNameButton(),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  CustomText(
+                    text: 'Menber',
+                    textSize: 16,
+                    fontWeight: FontWeight.w500,
+                    textColor: getSuitableColor(AppColor.black, AppColor.white),
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: listUser.length,
+                    itemBuilder: (context, index) {
+                      return FutureBuilder<DocumentSnapshot>(
+                          key: UniqueKey(),
+                          future: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(listUser[index])
+                              .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              final userID = snapshot.data!;
+                              return Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage: NetworkImage(userID[
+                                                'photoURL'] ==
+                                            ""
+                                        ? "https://png.pngtree.com/png-vector/20190805/ourlarge/pngtree-account-avatar-user-abstract-circle-background-flat-color-icon-png-image_1650938.jpg"
+                                        : userID['photoURL']),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  CustomText(
+                                    text: userID['name'],
+                                    textSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    textColor: getSuitableColor(
+                                        AppColor.black, AppColor.white),
+                                  ),
+                                ],
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          });
+                    },
+                  )
                 ],
               );
             },
-          )
+          ),
         ],
       ),
     );

@@ -106,9 +106,10 @@ class _CreateGroupState extends State<CreateGroup> {
         child: Column(
           children: [
             SizedBox(
-              height: 100,
-              width: double.infinity,
+              height: 120,
+              width: MediaQuery.of(context).size.width,
               child: Row(
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -117,49 +118,54 @@ class _CreateGroupState extends State<CreateGroup> {
                       size: 35,
                     ),
                   ),
-                  ListView.builder(
-                      //list 2
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: membersList.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Stack(
-                            children: [
-                              CircleAvatar(
-                                backgroundImage: NetworkImage(membersList[index]
-                                            .photoURL ==
-                                        ""
-                                    ? "https://png.pngtree.com/png-vector/20190805/ourlarge/pngtree-account-avatar-user-abstract-circle-background-flat-color-icon-png-image_1650938.jpg"
-                                    : membersList[index].photoURL),
+                  Expanded(
+                      child: ListView.builder(
+                          //list 2
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: membersList.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 20),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Stack(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 25,
+                                        backgroundImage: NetworkImage(membersList[
+                                                        index]
+                                                    .photoURL ==
+                                                ""
+                                            ? "https://png.pngtree.com/png-vector/20190805/ourlarge/pngtree-account-avatar-user-abstract-circle-background-flat-color-icon-png-image_1650938.jpg"
+                                            : membersList[index].photoURL),
+                                      ),
+                                      Positioned(
+                                          top: -5,
+                                          left: 30,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              removeMembers(index);
+                                            },
+                                            child: const Icon(
+                                              Icons.close,
+                                              color: Colors.black,
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                  CustomText(
+                                    text: (membersList[index].name),
+                                    textColor: AppColor.black,
+                                    textSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  )
+                                ],
                               ),
-                              Positioned(
-                                  top: 15,
-                                  left: 60,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      removeMembers(index);
-                                    },
-                                    child: const Icon(
-                                      Icons.close,
-                                      color: Colors.black,
-                                    ),
-                                  )),
-                              Positioned(
-                                bottom: 10,
-                                left: 20,
-                                child: CustomText(
-                                  text: (membersList[index].name),
-                                  textColor: AppColor.black,
-                                  textSize: 20,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      })
+                            );
+                          }))
                 ],
               ),
             ),
