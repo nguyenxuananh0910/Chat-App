@@ -13,7 +13,7 @@ class LocalNotificationService {
   static final FlutterLocalNotificationsPlugin
       _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   static void initialize() {
-    final InitializationSettings initializationSettings =
+    const InitializationSettings initializationSettings =
         InitializationSettings(
             iOS: DarwinInitializationSettings(),
             android: AndroidInitializationSettings('mipmap/ic_launcher'));
@@ -23,9 +23,9 @@ class LocalNotificationService {
   static void display(RemoteMessage message) async {
     try {
       print("in Notidicaton method");
-      Random random = new Random();
+      Random random = Random();
       int id = random.nextInt(1000);
-      final NotificationDetails notificationDetails = NotificationDetails(
+      const NotificationDetails notificationDetails = NotificationDetails(
           android: AndroidNotificationDetails(
         "com.example.chatappdemo",
         "com.example.chatappdemo",

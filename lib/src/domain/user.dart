@@ -5,8 +5,10 @@ class UserInfo {
   final String name;
   final String urlAvatar;
   final List<String> msgToken;
+  final String status;
 
   UserInfo({
+    required this.status,
     required this.idUsers,
     required this.name,
     this.urlAvatar = '',
@@ -18,6 +20,7 @@ class UserInfo {
       'name': name,
       'photoURL': urlAvatar,
       'msgToken': msgToken,
+      'status': status,
     };
   }
 
@@ -25,6 +28,7 @@ class UserInfo {
     return UserInfo(
       idUsers: document.id,
       name: document.get('name'),
+      status: document.get('status'),
       urlAvatar: document.get('photoURL'),
       msgToken: document.get('msgToken').cast<String>(),
     );
@@ -35,6 +39,7 @@ class UserInfo {
       name: json['name'],
       urlAvatar: json['photoURL'],
       msgToken: json['msgToken'].cast<String>(),
+      status: json['status'],
     );
   }
 }

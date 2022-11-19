@@ -64,6 +64,7 @@ class SignUpBloc {
             name: name,
             urlAvatar: user.photoURL ?? '',
             msgToken: [],
+            status: 'online',
           ),
         );
         return true;
