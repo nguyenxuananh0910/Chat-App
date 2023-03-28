@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomText extends StatelessWidget {
   final String text;
@@ -25,10 +24,11 @@ class CustomText extends StatelessWidget {
       text,
       textAlign: textAlign,
       style: TextStyle(
-        fontSize: textSize ?? 15.sp,
+        fontSize: textSize ?? 15,
         fontWeight: fontWeight,
         color: textColor,
         height: height,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
