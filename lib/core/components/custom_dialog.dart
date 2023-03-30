@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'custom_text.dart';
 
@@ -21,7 +20,7 @@ Future<bool?> customDialog(
             onPressed: () => Navigator.of(context).pop(false),
             child: CustomText(
               text: cancerActionText,
-              textSize: 18.sp,
+              textSize: 18,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -29,7 +28,7 @@ Future<bool?> customDialog(
           onPressed: () => Navigator.of(context).pop(true),
           child: CustomText(
             text: defaultActionText,
-            textSize: 18.sp,
+            textSize: 18,
             fontWeight: FontWeight.w500,
           ),
         )
